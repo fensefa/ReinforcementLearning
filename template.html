@@ -1,0 +1,85 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<style>
+    td{
+        border:1px solid #ccc;
+        width:60px;
+        height:60px;
+    }
+</style>
+</head>
+<body>
+<table id="table" style="border:1px solid #2e6377;background-color:#868686;text-align:center" border="1px">
+{% for i in range(1, go_size+1) %}
+    <tr>
+    {% for j in range(1, go_size+1) %}
+        <td weizhi={{"{}-{}".format(i,j)}} id={{"td-id-{}-{}".format(i, j)}}>0</td>
+    {% end %}
+    </tr>
+{% end %}
+<script> 
+    var G_GO_SIZE = {{go_size}};
+</script> 
+</table>
+<!--JS部分-->
+<script>
+$(document).ready(function(){
+    // var state_toggle=1;
+    $("td").click(function(){
+        if($(this).css("background-color")=="rgb(255, 255, 255)"){
+            //该位置已经下了白棋子
+            return false;
+        }
+        if($(this).css("background-color")=="rgb(0, 0, 0)"){
+            //该位置已经下了黑棋子
+            return false;
+        }
+        $(this).css({"background-color":"black","border-radius":"50px 50px 50px 50px"});
+        $(this).html('-');
+        get_feed_back();
+    })
+})
+function get_feed_back(){
+    var res = "";
+    for (var i=1;i<=G_GO_SIZE;i++) {
+        for (var j=1;j<=G_GO_SIZE;j++){
+            res += $("#td-id-"+i+"-"+j).html();
+        }
+    }
+    var response = $.ajax({
+        type: 'POST',
+        url: "/get_id",
+        async: false,
+        data: res,
+    });
+    responseList = response.responseText.split(":");
+    AI_id = responseList[0];
+    result = responseList[1];
+    console.log(responseList);
+    console.log(AI_id);
+    console.log(result);
+    doc = $("#" + AI_id);
+    doc.css({"background-color":"white","border-radius":"50px 50px 50px 50px"});
+    doc.html('+')
+    checkQiZi(result);
+}
+function checkQiZi(result){
+    if (result == "True") {
+        var who='白棋';
+    }
+    else if (result == "False") {
+        var who='黑棋';
+    }
+    else {
+        return
+    }
+    alert(who+'胜了！');
+    if(confirm('重新开始游戏？')){
+        window.location.reload();
+    }
+}
+</script>
+</body>
+</html>
