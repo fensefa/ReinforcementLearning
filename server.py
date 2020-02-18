@@ -13,6 +13,7 @@ class MainHandler(tornado.web.RequestHandler):
 # g_model = RuleModel(G_GO_SIZE)
 # g_model = DqnBaseModel(G_GO_SIZE)
 g_model = CNNModel(G_GO_SIZE)
+g_model.build_model()
 g_model.restore()
 class AIHandler(tornado.web.RequestHandler):
     def post(self):
@@ -37,7 +38,7 @@ class AIHandler(tornado.web.RequestHandler):
             print(-1,-1,result)
             self.write("td-id-{}-{}:{}".format(0,0,result[0]))
             return
-        i, j = g_model.predict(np_state)
+        i, j, score = g_model.predict(np_state)
         np_state[i][j] = 1
         result = g_model.result(np_state)
         print(i,j,result)
@@ -52,7 +53,8 @@ def make_app():
     )
 
 if __name__ == "__main__":
+    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
     app = make_app()
-    app.listen(8888)
+    app.listen(8088)
     tornado.autoreload.start()
     tornado.ioloop.IOLoop.current().start()
