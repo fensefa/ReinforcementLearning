@@ -53,12 +53,12 @@ class GoBang:
 
     def evaluate(self, i, j):
 
-        def equal(i2, j2):
-            if not 0 <= i2 < self._cell_num:
+        def equal(x, y):
+            if not 0 <= x < self._cell_num:
                 return False
-            if not 0 <= j2 < self._cell_num:
+            if not 0 <= x < self._cell_num:
                 return False
-            if not self._board[i2][j2] == self._board[i][j]:
+            if not self._board[x][y] == self._board[i][j]:
                 return False
             return True
 
@@ -138,11 +138,11 @@ class Render:
         self._cell_num = gobang.cell_num()
         self._cycle_size = int(.4 * self._cell_size)
         self._grid_size = self._cell_size * (self._cell_num - 1) + self._space * 2  # 棋盘的大小
-        self._screen_caption = pygame.display.set_caption('Easy Five Game')
-        self._screen = pygame.display.set_mode((self._grid_size, self._grid_size))  # 设置窗口长宽
         self._position = (0, 0)
+        pygame.display.set_caption('Easy Five Game')
         pygame.font.init()
         self._font = pygame.font.SysFont("Times New Roman", 48)
+        self._screen = pygame.display.set_mode((self._grid_size, self._grid_size))  # 设置窗口长宽
 
     def start(self):
         while True:

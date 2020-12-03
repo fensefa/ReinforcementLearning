@@ -1,5 +1,6 @@
 __pycache__
 *.bak
 *.log
+*.idea
 data
 model
