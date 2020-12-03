@@ -120,7 +120,7 @@ class RandomStrategy:
         while True:
             i = random.randint(0, cell_num - 1)
             j = random.randint(0, cell_num - 1)
-            if board[i][j] != 0:
+            if board[i][j] != PointState.EMPTY:
                 continue
             return i, j
 
@@ -140,6 +140,7 @@ class Render:
         self._grid_size = self._cell_size * (self._cell_num - 1) + self._space * 2  # 棋盘的大小
         self._screen_caption = pygame.display.set_caption('Easy Five Game')
         self._screen = pygame.display.set_mode((self._grid_size, self._grid_size))  # 设置窗口长宽
+        self._position = (0, 0)
         pygame.font.init()
         self._font = pygame.font.SysFont("Times New Roman", 48)
 
@@ -155,6 +156,7 @@ class Render:
             for event in pygame.event.get():
                 self.handle_event(event)
             self.render()
+            time.sleep(1)
 
     def handle_event(self, event):
         if event.type == pygame.QUIT:
@@ -167,6 +169,7 @@ class Render:
             if x == self._cell_num and y == -1:
                 return
             if 0 <= x < self._cell_num and 0 <= y < self._cell_num:
+                self._position = (x, y)
                 self._gobang.step(x, y)
 
     def render(self):
@@ -191,6 +194,14 @@ class Render:
                                        (255, 255, 255),
                                        center,
                                        self._cycle_size)
+        i, j = self._position
+        position = (
+                int((i - 0.5) * self._cell_size + self._space),
+                int((j - 0.5) * self._cell_size + self._space),
+                self._cell_size,
+                self._cell_size,
+                )
+        pygame.draw.rect(self._screen, (255, 255, 255), position, 1)
         img = self._font.render("restart", True, (15, 65, 45))
         self._screen.blit(img, (self._cell_num * self._cell_size, 20))
         result = self._gobang.result()
