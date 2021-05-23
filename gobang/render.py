@@ -56,7 +56,7 @@ class GoBang:
         def equal(x, y):
             if not 0 <= x < self._cell_num:
                 return False
-            if not 0 <= x < self._cell_num:
+            if not 0 <= y < self._cell_num:
                 return False
             if not self._board[x][y] == self._board[i][j]:
                 return False
@@ -138,7 +138,7 @@ class Render:
         self._cell_num = gobang.cell_num()
         self._cycle_size = int(.4 * self._cell_size)
         self._grid_size = self._cell_size * (self._cell_num - 1) + self._space * 2  # 棋盘的大小
-        self._position = (0, 0)
+        self._position = [0, 0]
         pygame.display.set_caption('Easy Five Game')
         pygame.font.init()
         self._font = pygame.font.SysFont("Times New Roman", 48)
@@ -169,8 +169,20 @@ class Render:
             if x == self._cell_num and y == -1:
                 return
             if 0 <= x < self._cell_num and 0 <= y < self._cell_num:
-                self._position = (x, y)
+                self._position = [x, y]
                 self._gobang.step(x, y)
+        if event.type == pygame.KEYDOWN:
+            print('key', event.key)
+            if event.key == pygame.K_LEFT:
+                self._position[0] = max(0, self._position[0] - 1)
+            elif event.key == pygame.K_RIGHT:
+                self._position[0] = min(self._cell_num - 1, self._position[0] + 1)
+            if event.key == pygame.K_UP:
+                self._position[1] = max(0, self._position[1] - 1)
+            elif event.key == pygame.K_DOWN:
+                self._position[1] = min(self._cell_num - 1, self._position[1] + 1)
+            elif event.key == pygame.K_RETURN:
+                self._gobang.step(*self._position)
 
     def render(self):
         self._screen.fill((50, 100, 50))  # 将界面设置为蓝色
@@ -217,8 +229,8 @@ class Render:
 
 
 if __name__ == "__main__":
-    gobang = GoBang(5)
+    gobang = GoBang(7)
     render = Render(gobang,
-                    black_strategy=None,
+                    black_strategy=RandomStrategy(),
                     white_strategy=RandomStrategy())
     render.start()
